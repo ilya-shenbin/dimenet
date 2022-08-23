@@ -1,27 +1,45 @@
 import numpy as np
 import scipy.sparse as sp
 
+from schnetpack.data import AtomsData
+
 index_keys = ["batch_seg", "idnb_i", "idnb_j", "id_expand_kj",
               "id_reduce_ji", "id3dnb_i", "id3dnb_j", "id3dnb_k"]
 
 
 class DataContainer:
     def __init__(self, filename, cutoff, target_keys):
-        data_dict = np.load(filename, allow_pickle=True)
         self.cutoff = cutoff
         self.target_keys = target_keys
-        for key in ['id', 'N', 'Z', 'R']:
-            if key in data_dict:
-                setattr(self, key, data_dict[key])
-            else:
-                setattr(self, key, None)
-        self.targets = np.stack([data_dict[key] for key in self.target_keys], axis=1)
-
+        
+        if target_keys != ['E']:
+            raise NotImplementedError
+        
+        database = AtomsData(filename)
+        n_mol = len(database)
+        
+        id, N, Z, R, E = [], [], [], [], []
+        
+        for i in range(n_mol):
+            properties = database.get_properties(i)[1]
+            id.append(i)
+            Z.append(properties['_atomic_numbers'])
+            N.append(len(properties['_atomic_numbers']))
+            R.append(properties['_positions'])
+            E.append(properties['energy'])
+            
+        self.id = np.stack(id)
+        self.N = np.stack(N)
+        self.Z = np.hstack(Z)
+        self.R = np.vstack(R)
+        self.targets = np.stack(E)        
+        
         if self.N is None:
             self.N = np.zeros(len(self.targets), dtype=np.int32)
         self.N_cumsum = np.concatenate([[0], np.cumsum(self.N)])
 
         assert self.R is not None
+        
 
     def _bmat_fast(self, mats):
         new_data = np.concatenate([mat.data for mat in mats])

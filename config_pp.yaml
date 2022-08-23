@@ -21,7 +21,8 @@ num_dense_output: 3
 num_train: 110000
 num_valid: 10000
 data_seed: 42
-dataset: "data/qm9_eV.npz"
+dataset: '../../data/energy/train_100k_energy.db'
+dataset_test: '../../data/energy/test_100k_conformers.db'
 logdir: "."
 
 num_steps: 3000000
@@ -37,4 +38,4 @@ evaluation_interval: 10000
 save_interval: 10000
 restart: None
 comment: "final"
-targets: ['U0']  # ['mu', 'alpha', 'homo', 'lumo', 'gap', 'r2', 'zpve', 'U0', 'U', 'H', 'G', 'Cv']
+targets: ['E']
