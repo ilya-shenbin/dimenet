@@ -20,9 +20,10 @@ num_dense_output: 3
 
 valid_frac: 0.1
 data_seed: 42
-dataset: '../../data/energy/train_100k_energy.db'
-dataset_test: '../../data/energy/test_100k_conformers.db'
-logdir: "."
+dataset: '../../data/energy/train_2k_energy.db'
+dataset_test: '../../data/energy/test_2k_conformers.db'
+saved_model_dir: 'runs/20220825_125406_qUlTnQJj_train_2k_energy.db_E_final'
+logdir: "runs"
 
 num_steps: 3000000
 ema_decay: 0.999
